@@ -1,0 +1,68 @@
+# Build directories
+build/
+bin/
+lib/
+dist/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Compiled object files
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Test results
+test_results/
+*.xml
+*.log
+
+# Coverage reports
+coverage/
+*.gcov
+*.gcda
+*.gcno
+
+# Documentation
+doc/html/
+doc/latex/
+
+# Package files
+*.tar.gz
+*.zip
