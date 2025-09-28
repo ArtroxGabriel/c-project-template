@@ -45,10 +45,11 @@ c-project-template/
 
 ```bash
 # Clone or create your project from this template
-mkdir build
-cd build
-cmake ..
-make
+# Configure with CMake (generate build directory)
+cmake -S . -B build
+
+# Build the project
+cmake --build build
 ```
 
 ### Available CMake Targets
@@ -56,48 +57,53 @@ make
 | Target | Description |
 |--------|-------------|
 | `build` | Build the main executable (default) |
-| `format` | Format all source code with clang-format |
+| `format` | Format all source code with clang-format (LLVM style) |
 | `format-check` | Check if code is properly formatted |
+| `test` | Run all unit tests (built-in CTest target) |
 | `test-run` | Run all unit tests |
 | `test-memory` | Run tests with memory checking (requires valgrind) |
+| `lint` | Run clang-tidy linter on source code |
 
 ### Building and Running
 
 ```bash
-# Create build directory
-mkdir build && cd build
-
-# Configure with CMake
-cmake ..
+# Generate build directory
+cmake -S . -B build
 
 # Build the project
-make build
+cmake --build build
 
 # Run the executable
-./c-project-template
+./build/c-project-template
 ```
 
 ### Running Tests
 
 ```bash
-# Run unit tests
-make test-run
+# Run unit tests (using built-in test target)
+cmake --build build --target test
+
+# Or run custom test-run target
+cmake --build build --target test-run
 
 # Or use CTest directly
-ctest --output-on-failure
+cd build && ctest --output-on-failure
 
 # Run tests with memory checking (requires valgrind)
-make test-memory
+cmake --build build --target test-memory
 ```
 
 ### Code Formatting
 
 ```bash
-# Format all source code
-make format
+# Format all source code (using LLVM style)
+cmake --build build --target format
 
 # Check if code is properly formatted
-make format-check
+cmake --build build --target format-check
+
+# Run linter on source code
+cmake --build build --target lint
 ```
 
 ## Development Workflow
@@ -109,19 +115,20 @@ make format-check
 
 2. **Test your changes**:
    ```bash
-   make build         # Build the project
-   make test-run      # Run tests
-   make format-check  # Check formatting
+   cmake --build build             # Build the project
+   cmake --build build --target test      # Run tests
+   cmake --build build --target format-check  # Check formatting
+   cmake --build build --target lint      # Run linter
    ```
 
 3. **Format your code**:
    ```bash
-   make format        # Auto-format code
+   cmake --build build --target format    # Auto-format code
    ```
 
 4. **Memory testing** (if valgrind is available):
    ```bash
-   make test-memory   # Check for memory leaks
+   cmake --build build --target test-memory   # Check for memory leaks
    ```
 
 ## Adding New Tests
@@ -184,12 +191,12 @@ set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 ### Code Formatting Style
 
-The project uses a Google-based clang-format style. Modify `.clang-format` to customize:
+The project uses an LLVM-based clang-format style. Modify `.clang-format` to customize:
 
 ```yaml
 ---
 Language: Cpp
-BasedOnStyle: Google
+BasedOnStyle: LLVM
 IndentWidth: 4
 TabWidth: 4
 # ... other options
