@@ -47,7 +47,7 @@ if(NOT EXISTS ${CMAKE_SOURCE_DIR}/.clang-format)
     file(WRITE ${CMAKE_SOURCE_DIR}/.clang-format
 "---
 Language: Cpp
-BasedOnStyle: Google
+BasedOnStyle: LLVM
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
@@ -160,6 +160,28 @@ add_custom_target(test-run
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
+# Find clang-tidy for linting
+find_program(CLANG_TIDY_EXECUTABLE NAMES clang-tidy clang-tidy-12 clang-tidy-11 clang-tidy-10)
+
+# Lint target
+if(CLANG_TIDY_EXECUTABLE)
+    file(GLOB_RECURSE LINT_SOURCE_FILES
+        ${CMAKE_SOURCE_DIR}/src/*.c
+        ${CMAKE_SOURCE_DIR}/include/*.h
+    )
+    
+    add_custom_target(lint
+        COMMAND ${CLANG_TIDY_EXECUTABLE} ${LINT_SOURCE_FILES} -- -I${CMAKE_SOURCE_DIR}/include
+        COMMENT "Running clang-tidy linter on source code"
+        VERBATIM
+    )
+else()
+    add_custom_target(lint
+        COMMAND ${CMAKE_COMMAND} -E echo "clang-tidy not found. Please install clang-tidy to use this target."
+        COMMENT "Lint target (clang-tidy not available)"
+    )
+endif()
+
 # Find valgrind for memory testing
 find_program(VALGRIND_EXECUTABLE NAMES valgrind)
 
@@ -200,6 +222,8 @@ message(STATUS "Available targets:")
 message(STATUS "  build        - Build the main executable")
 message(STATUS "  format       - Format code with clang-format")
 message(STATUS "  format-check - Check code formatting")
+message(STATUS "  test         - Run unit tests (built-in CTest target)")
 message(STATUS "  test-run     - Run unit tests")
 message(STATUS "  test-memory  - Run tests with memory checking")
+message(STATUS "  lint         - Run clang-tidy linter on source code")
 message(STATUS "")
