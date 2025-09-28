@@ -96,3 +96,11 @@ coverage/
 
 # Valgrind output
 *.valgrind
+
+
+# LSP compile commands symlink
+compile_commands.json
+
+# clangd cache
+.cache/
+

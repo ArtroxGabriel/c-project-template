@@ -10,6 +10,26 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+# Enable compile_commands.json generation
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Optional: Create symlink in source directory for easier LSP access
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+    add_custom_target(compile-commands
+        COMMAND ${CMAKE_COMMAND} -E create_symlink 
+            ${CMAKE_BINARY_DIR}/compile_commands.json 
+            ${CMAKE_SOURCE_DIR}/compile_commands.json
+        COMMENT "Creating symlink to compile_commands.json in source directory"
+    )
+    
+    # Automatically create the symlink after configuring
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E create_symlink 
+            ${CMAKE_BINARY_DIR}/compile_commands.json 
+            ${CMAKE_SOURCE_DIR}/compile_commands.json
+    )
+endif()
+
 # Compiler flags
 set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Werror -pedantic")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
