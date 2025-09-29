@@ -212,6 +212,113 @@ find_package(YourLibrary REQUIRED)
 target_link_libraries(${PROJECT_NAME} YourLibrary::YourLibrary)
 ```
 
+## Using This Template
+
+When using this template for your own project, you'll need to customize several fields and replace the example code. Here's a comprehensive list of what needs to be changed:
+
+### Required Changes
+
+#### 1. Project Configuration (`CMakeLists.txt`)
+
+Update the project metadata at the top of the file:
+
+```cmake
+# Change these values:
+project(your-project-name VERSION 1.0.0 LANGUAGES C)
+```
+
+- **`your-project-name`**: Replace with your actual project name (use lowercase with hyphens)
+- **`VERSION 1.0.0`**: Set your initial version number
+
+#### 2. Documentation (`README.md`)
+
+Replace the template-specific content:
+
+- **Project title**: Change `# C Project Template` to `# Your Project Name`
+- **Project description**: Replace the template description with your project's purpose
+- **Project structure**: Update the directory tree to reflect your actual files
+- **Features section**: Describe your project's features instead of template features
+- **Requirements**: Update with your project's specific dependencies
+- **Building instructions**: Adapt if you have special build requirements
+- **License section**: Update with your project's license information
+
+#### 3. Source Code (`src/` directory)
+
+Replace all example code with your actual implementation:
+
+- **`src/main.c`**: Replace the example main function with your application's entry point
+- **`src/example.c`**: Replace with your actual source files (rename as needed)
+- Remove or replace example functions (`add`, `multiply`, `is_even`)
+
+#### 4. Header Files (`include/` directory)
+
+Replace example headers with your actual interfaces:
+
+- **`include/example.h`**: Replace with your actual header files (rename as needed)
+- Update function declarations to match your implementation
+- Update comments and documentation
+
+#### 5. Test Files (`test/` directory)
+
+Replace example tests with tests for your actual code:
+
+- **`test/test_example.c`**: Replace with tests for your actual functions
+- Update test function names and test cases
+- Update suite names to reflect your project
+- Add new test files as needed for different modules
+
+#### 6. Repository Metadata
+
+Update version control and project files:
+
+- **`.gitignore`**: Add any project-specific ignore patterns
+- **Repository name**: If using GitHub, rename your repository
+- **Repository description**: Update the repository description on GitHub
+
+### Optional Changes
+
+#### 1. Code Style (`.clang-format`)
+
+The template uses LLVM style by default. Modify if you prefer different formatting:
+
+```yaml
+# Customize these values:
+IndentWidth: 4        # Your preferred indent width
+TabWidth: 4           # Your preferred tab width
+ColumnLimit: 100      # Your preferred line length
+# ... other style options
+```
+
+#### 2. Compiler Flags (`CMakeLists.txt`)
+
+Adjust compiler flags based on your requirements:
+
+```cmake
+# Customize these flags:
+set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Werror -pedantic")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
+```
+
+#### 3. C Standard (`CMakeLists.txt`)
+
+Change the C standard if needed:
+
+```cmake
+# Change if you need a different C standard:
+set(CMAKE_C_STANDARD 99)  # Options: 90, 99, 11, 17, 23
+```
+
+### Verification Checklist
+
+After customization, verify your changes:
+
+- [ ] Project builds successfully: `cmake -S . -B build && cmake --build build`
+- [ ] Tests pass: `cmake --build build --target test`
+- [ ] Code formatting works: `cmake --build build --target format-check`
+- [ ] Your executable runs correctly: `./build/your-project-name`
+- [ ] README.md accurately describes your project
+- [ ] All example code has been replaced with your implementation
+
 ## License
 
 This template is provided as-is for you to use in your own projects. Modify as needed for your specific requirements.
