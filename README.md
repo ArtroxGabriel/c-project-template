@@ -214,110 +214,298 @@ target_link_libraries(${PROJECT_NAME} YourLibrary::YourLibrary)
 
 ## Using This Template
 
-When using this template for your own project, you'll need to customize several fields and replace the example code. Here's a comprehensive list of what needs to be changed:
+This section provides specific, actionable steps to customize this template for your own C project.
 
-### Required Changes
+### Essential Field Changes
 
-#### 1. Project Configuration (`CMakeLists.txt`)
+#### 1. Change the Binary Name (`CMakeLists.txt`)
 
-Update the project metadata at the top of the file:
-
+**What to change**: Line 2 in `CMakeLists.txt`
 ```cmake
-# Change these values:
-project(your-project-name VERSION 1.0.0 LANGUAGES C)
+# FROM:
+project(c-project-template VERSION 1.0.0 LANGUAGES C)
+
+# TO:
+project(my-calculator VERSION 1.0.0 LANGUAGES C)
+```
+**Result**: Your executable will be named `my-calculator` instead of `c-project-template`
+
+#### 2. Change Project Version (`CMakeLists.txt`)
+
+**What to change**: Same line as above
+```cmake
+# FROM:
+project(my-calculator VERSION 1.0.0 LANGUAGES C)
+
+# TO:
+project(my-calculator VERSION 0.1.0 LANGUAGES C)
+```
+**Result**: Sets your initial version number
+
+#### 3. Change Project Title (`README.md`)
+
+**What to change**: Line 1 in `README.md`
+```markdown
+# FROM:
+# C Project Template
+
+# TO:
+# My Calculator
+```
+**Result**: Updates the main project title in documentation
+
+#### 4. Change Project Description (`README.md`)
+
+**What to change**: Line 3 in `README.md`
+```markdown
+# FROM:
+A comprehensive C project template with CMake build system, automated testing, code formatting, and memory checking capabilities.
+
+# TO:
+A simple command-line calculator written in C with basic arithmetic operations.
+```
+**Result**: Describes your actual project instead of the template
+
+### Adding New Source Files
+
+#### Adding a New C Source File
+
+1. **Create the header file** in `include/` directory:
+```bash
+# Create include/math_operations.h
 ```
 
-- **`your-project-name`**: Replace with your actual project name (use lowercase with hyphens)
-- **`VERSION 1.0.0`**: Set your initial version number
+2. **Add function declarations**:
+```c
+// include/math_operations.h
+#ifndef MATH_OPERATIONS_H
+#define MATH_OPERATIONS_H
 
-#### 2. Documentation (`README.md`)
+double divide(double a, double b);
+double power(double base, double exponent);
 
-Replace the template-specific content:
+#endif /* MATH_OPERATIONS_H */
+```
 
-- **Project title**: Change `# C Project Template` to `# Your Project Name`
-- **Project description**: Replace the template description with your project's purpose
-- **Project structure**: Update the directory tree to reflect your actual files
-- **Features section**: Describe your project's features instead of template features
-- **Requirements**: Update with your project's specific dependencies
-- **Building instructions**: Adapt if you have special build requirements
-- **License section**: Update with your project's license information
+3. **Create the implementation file** in `src/` directory:
+```bash
+# Create src/math_operations.c
+```
 
-#### 3. Source Code (`src/` directory)
+4. **Add function implementations**:
+```c
+// src/math_operations.c
+#include "math_operations.h"
+#include <math.h>
 
-Replace all example code with your actual implementation:
+double divide(double a, double b) {
+    if (b != 0) {
+        return a / b;
+    }
+    return 0; // or handle error appropriately
+}
 
-- **`src/main.c`**: Replace the example main function with your application's entry point
-- **`src/example.c`**: Replace with your actual source files (rename as needed)
-- Remove or replace example functions (`add`, `multiply`, `is_even`)
+double power(double base, double exponent) {
+    return pow(base, exponent);
+}
+```
 
-#### 4. Header Files (`include/` directory)
+**Result**: CMake automatically detects and builds the new file
 
-Replace example headers with your actual interfaces:
+#### Adding a New Test File
 
-- **`include/example.h`**: Replace with your actual header files (rename as needed)
-- Update function declarations to match your implementation
-- Update comments and documentation
+1. **Create the test file** in `test/` directory:
+```bash
+# Create test/test_math_operations.c
+```
 
-#### 5. Test Files (`test/` directory)
+2. **Add test implementation**:
+```c
+// test/test_math_operations.c
+#include <check.h>
+#include <stdlib.h>
+#include "math_operations.h"
 
-Replace example tests with tests for your actual code:
+START_TEST(test_divide) {
+    ck_assert_double_eq_tol(divide(10.0, 2.0), 5.0, 0.001);
+    ck_assert_double_eq(divide(7.0, 0.0), 0.0); // Error case
+}
+END_TEST
 
-- **`test/test_example.c`**: Replace with tests for your actual functions
-- Update test function names and test cases
-- Update suite names to reflect your project
-- Add new test files as needed for different modules
+START_TEST(test_power) {
+    ck_assert_double_eq_tol(power(2.0, 3.0), 8.0, 0.001);
+    ck_assert_double_eq_tol(power(5.0, 0.0), 1.0, 0.001);
+}
+END_TEST
 
-#### 6. Repository Metadata
+Suite *math_operations_suite(void) {
+    Suite *s;
+    TCase *tc_core;
 
-Update version control and project files:
+    s = suite_create("MathOperations");
+    tc_core = tcase_create("Core");
 
-- **`.gitignore`**: Add any project-specific ignore patterns
-- **Repository name**: If using GitHub, rename your repository
-- **Repository description**: Update the repository description on GitHub
+    tcase_add_test(tc_core, test_divide);
+    tcase_add_test(tc_core, test_power);
+    suite_add_tcase(s, tc_core);
 
-### Optional Changes
+    return s;
+}
 
-#### 1. Code Style (`.clang-format`)
+int main(void) {
+    int number_failed;
+    Suite *s;
+    SRunner *sr;
 
-The template uses LLVM style by default. Modify if you prefer different formatting:
+    s = math_operations_suite();
+    sr = srunner_create(s);
 
+    srunner_run_all(sr, CK_NORMAL);
+    number_failed = srunner_ntests_failed(sr);
+    srunner_free(sr);
+
+    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+```
+
+**Result**: CMake automatically detects and builds the new test
+
+### Replacing Example Code
+
+#### Remove Example Files
+
+1. **Delete example source file**:
+```bash
+rm src/example.c
+```
+
+2. **Delete example header file**:
+```bash
+rm include/example.h
+```
+
+3. **Delete example test file**:
+```bash
+rm test/test_example.c
+```
+
+4. **Update main.c** to use your new functions:
+```c
+// src/main.c
+#include <stdio.h>
+#include "math_operations.h"
+
+int main() {
+    printf("My Calculator\n");
+    printf("=============\n");
+    printf("10 / 2 = %.2f\n", divide(10.0, 2.0));
+    printf("2^3 = %.2f\n", power(2.0, 3.0));
+    return 0;
+}
+```
+
+**Result**: Your project now has your own code instead of examples
+
+### Quick Start Guide
+
+Follow these steps to transform this template into your own project:
+
+1. **Clone and rename**:
+```bash
+git clone https://github.com/ArtroxGabriel/c-project-template.git my-project
+cd my-project
+```
+
+2. **Change project name** (edit `CMakeLists.txt` line 2):
+```cmake
+project(my-project VERSION 1.0.0 LANGUAGES C)
+```
+
+3. **Build and test**:
+```bash
+cmake -S . -B build
+cmake --build build
+./build/my-project  # Should run your renamed executable
+```
+
+4. **Replace example code** with your implementation:
+   - Edit `src/main.c` for your main function
+   - Replace `src/example.c` and `include/example.h` with your files
+   - Replace `test/test_example.c` with your tests
+
+5. **Update documentation**:
+   - Change the title in `README.md`
+   - Update project description
+   - Update project structure diagram
+
+6. **Verify everything works**:
+```bash
+cmake --build build --target test      # Run tests
+cmake --build build --target format    # Format code
+```
+
+### Advanced Customization
+
+#### 1. Change Code Style (`.clang-format`)
+
+**What to change**: Edit the `.clang-format` file
 ```yaml
-# Customize these values:
-IndentWidth: 4        # Your preferred indent width
-TabWidth: 4           # Your preferred tab width
-ColumnLimit: 100      # Your preferred line length
-# ... other style options
+# FROM:
+IndentWidth: 4
+ColumnLimit: 100
+
+# TO:
+IndentWidth: 2        # Use 2-space indentation
+ColumnLimit: 80       # Shorter line length
 ```
+**Result**: Code formatting matches your preferred style
 
-#### 2. Compiler Flags (`CMakeLists.txt`)
+#### 2. Change Compiler Flags (`CMakeLists.txt`)
 
-Adjust compiler flags based on your requirements:
-
+**What to change**: Lines 34-35 in `CMakeLists.txt`
 ```cmake
-# Customize these flags:
+# FROM:
 set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Werror -pedantic")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
+
+# TO:
+set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall -Wextra")  # Less strict
+set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")        # Less aggressive optimization
 ```
+**Result**: Compilation uses your preferred warning levels and optimization
 
-#### 3. C Standard (`CMakeLists.txt`)
+#### 3. Change C Standard (`CMakeLists.txt`)
 
-Change the C standard if needed:
-
+**What to change**: Line 5 in `CMakeLists.txt`
 ```cmake
-# Change if you need a different C standard:
-set(CMAKE_C_STANDARD 99)  # Options: 90, 99, 11, 17, 23
+# FROM:
+set(CMAKE_C_STANDARD 99)
+
+# TO:
+set(CMAKE_C_STANDARD 11)  # Use C11 standard
 ```
+**Result**: Enables C11 features in your code
 
-### Verification Checklist
+### Verification Commands
 
-After customization, verify your changes:
+After making changes, verify everything works:
 
-- [ ] Project builds successfully: `cmake -S . -B build && cmake --build build`
-- [ ] Tests pass: `cmake --build build --target test`
-- [ ] Code formatting works: `cmake --build build --target format-check`
-- [ ] Your executable runs correctly: `./build/your-project-name`
-- [ ] README.md accurately describes your project
-- [ ] All example code has been replaced with your implementation
+```bash
+# Build the project
+cmake -S . -B build && cmake --build build
+
+# Run tests
+cmake --build build --target test
+
+# Check code formatting
+cmake --build build --target format-check
+
+# Run your executable
+./build/your-project-name
+
+# Check for memory leaks (if valgrind is available)
+cmake --build build --target test-memory
+```
 
 ## License
 
